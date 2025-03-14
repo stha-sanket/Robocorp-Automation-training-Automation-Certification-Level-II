@@ -1,60 +1,77 @@
-# Template: Python - Minimal
+# Robot Order Automation
 
-This template leverages the new [Python framework](https://github.com/robocorp/robocorp), the [libraries](https://github.com/robocorp/robocorp/blob/master/docs/README.md#python-libraries) from to same project as well.
+## Description
 
-The template provides you with the basic structure of a Python project: logging out of the box and controlling your tasks without fiddling with the base Python stuff. The environment contains the most used libraries, so you do not have to start thinking about those right away. 
+This Robot Framework script automates the process of ordering robots from the RobotSpareBin Industries Inc. website. It performs the following actions:
 
-👉 Other templates are available as well via our tooling and on our [Portal](https://robocorp.com/portal/tag/template)
+1.  Opens the Robot Order website.
+2.  Downloads the order data from a CSV file.
+3.  Iterates through each order, filling out the order form.
+4.  Saves the order receipt as a PDF file.
+5.  Takes a screenshot of the ordered robot.
+6.  Embeds the screenshot into the PDF receipt.
+7.  Creates a ZIP archive of all the generated receipts and images.
 
-## Running
+## Prerequisites
 
-#### VS Code
-1. Get [Robocorp Code](https://robocorp.com/docs/developer-tools/visual-studio-code/extension-features) -extension for VS Code.
-1. You'll get an easy-to-use side panel and powerful command-palette commands for running, debugging, code completion, docs, etc.
+*   **Python 3.7+**
+*   **Robocorp Framework**: `pip install robocorp-framework`
+*   **Required Libraries**:
+    *   `rpaframework`
+    *   `rpaframework-browser`
+    *   `rpaframework-pdf`
+    *   `rpaframework-tables`
+    *   `rpaframework-http`
+    *   `rpaframework-archive`
+    *   `Pillow` (PIL)
+*   Install these libraries using `pip install rpaframework rpaframework-browser rpaframework-pdf rpaframework-tables rpaframework-http rpaframework-archive Pillow`
 
-#### Command line
+## Setup and Installation
 
-1. [Get RCC](https://github.com/robocorp/rcc?tab=readme-ov-file#getting-started)
-1. Use the command: `rcc run`
+1.  **Install Robocorp Framework:**
+    ```bash
+    pip install robocorp-framework
+    ```
 
-## Results
+2.  **Install Required Libraries:**
+    ```bash
+    pip install rpaframework rpaframework-browser rpaframework-pdf rpaframework-tables rpaframework-http rpaframework-archive Pillow
+    ```
 
-🚀 After running the bot, check out the `log.html` under the `output` -folder.
+## Usage
 
-## Dependencies
+1.  **Run the Robot:**
 
-We strongly recommend getting familiar with adding your dependencies in [conda.yaml](conda.yaml) to control your Python dependencies and the whole Python environment for your automation.
+    Navigate to the directory containing the robot script (`tasks.py`) and run:
 
-<details>
-  <summary>🙋‍♂️ "Why not just pip install...?"</summary>
+    ```bash
+    rcc task run
+    ```
 
-Think of [conda.yaml](conda.yaml) as an equivalent of the requirements.txt, but much better. 👩‍💻 With `conda.yaml`, you are not just controlling your PyPI dependencies; you control the complete Python environment, which makes things repeatable and easy.
+    This command will execute the `order_robots_from_RobotSpareBin` task.
 
-👉 You will probably need to run your code on another machine quite soon, so by using `conda.yaml`:
-- You can avoid `Works on my machine` -cases
-- You do not need to manage Python installations on all the machines
-- You can control exactly which version of Python your automation will run on 
-  - You'll also control the pip version to avoid dep. resolution changes
-- No need for venv, pyenv, ... tooling and knowledge sharing inside your team.
-- Define dependencies in conda.yaml, let our tooling do the heavy lifting.
-- You get all the content of [conda-forge](https://prefix.dev/channels/conda-forge) without any extra tooling
+## Task Breakdown
 
-> Dive deeper with [these](https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-is-in-condayaml) resources.
+*   `order_robots_from_RobotSpareBin()`: The main task function that orchestrates the entire robot ordering process.
+*   `open_robot_order_website()`: Opens the RobotSpareBin Industries Inc. website.
+*   `close_annoying_modal()`: Closes the initial modal on the website.
+*   `download_excel_file()`: Downloads the CSV file containing the robot order data.
+*   `get_orders()`: Reads the CSV file using the `Tables` library and returns an iterable of order rows.
+*   `fill_the_form()`:
+    *   Iterates through each order in the CSV file.
+    *   Selects the appropriate head and body options based on the order data.
+    *   Fills in the legs and address fields.
+    *   Submits the order and handles potential failures by retrying.
+    *   Calls helper functions to save the receipt, take a screenshot, and embed the screenshot.
+*   `store_receipt_as_pdf()`: Saves the HTML receipt as a PDF file.
+*   `screenshot_robot()`: Takes a screenshot of the ordered robot and resizes it.
+*   `embed_screenshot_to_receipt()`: Embeds the robot screenshot into the PDF receipt.
+*   `archive_receipts()`: Creates a ZIP archive containing all the generated PDF receipts and robot screenshots.
 
-</details>
-<br/>
+## Output
 
-> The full power of [rpaframework](https://robocorp.com/docs/python/rpa-framework) -libraries is also available on Python as a backup while we implement the new Python libraries.
+The script produces the following output files in the `output` directory:
 
-## What now?
-
-🚀 Now, go get'em
-
-Start writing Python and remember that the AI/LLM's out there are getting really good and creating Python code specifically.
-
-👉 Try out [Robocorp ReMark 💬](https://chat.robocorp.com)
-
-For more information, do not forget to check out the following:
-- [Robocorp Documentation -site](https://robocorp.com/docs)
-- [Portal for more examples](https://robocorp.com/portal)
-- Follow our main [robocorp -repository](https://github.com/robocorp/robocorp) as it is the main location where we developed the libraries and the framework.
+*   `[Order Number].pdf`: The PDF receipt for each robot order, including the embedded screenshot.
+*   `[Order Number].png`: The screenshot of the ordered robot.
+*   `merged.zip`: A ZIP archive containing all the PDF receipts and screenshots.
